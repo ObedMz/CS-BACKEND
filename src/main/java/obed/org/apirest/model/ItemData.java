@@ -1,4 +1,4 @@
-package obed.org.apirest.entities;
+package obed.org.apirest.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -10,10 +10,12 @@ import java.util.Set;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InventoryItem {
+public class ItemData {
     @Id
     private String id;
     private String markethashname;
+    private Float addedPercentage;
+    private Boolean hidden;
     private String marketname;
     private String slug;
     private int count;
