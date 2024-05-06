@@ -3,7 +3,6 @@ package obed.org.apirest.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import obed.org.apirest.model.ItemData;
 
-import obed.org.apirest.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

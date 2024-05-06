@@ -3,7 +3,12 @@ package obed.org.apirest.controllers;
 import obed.org.apirest.model.ItemData;
 import obed.org.apirest.service.ItemService;
 import obed.org.apirest.service.SteamAPIService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +27,10 @@ public class ItemController {
 
     @GetMapping("/items")
     public ResponseEntity<List<ItemData>> filterItems(@RequestParam Map<String, String> filters) {
-        List<ItemData> filteredItems = itemService.filterItems(filters);
-        return ResponseEntity.ok(filteredItems);
+        return ResponseEntity.ok(itemService.filterItems(filters));
     }
+
+
 
     @PatchMapping("/update")
     public ResponseEntity<Void> updateItems() {

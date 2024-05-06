@@ -12,6 +12,4 @@ import java.util.List;
 public interface ItemRepository extends MongoRepository<ItemData, String> {
 
     ItemData findByitemname(String itemname);
-
-    List<ItemData> findByCustomQuery(Query query);
 }
