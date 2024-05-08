@@ -10,6 +10,6 @@ import java.util.Set;
 public class SteamDTO {
     private String key;
 
-    private Set<String> userKeys;
+    private Set<String> steamIDs;
 
 }
