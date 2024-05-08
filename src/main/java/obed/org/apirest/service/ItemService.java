@@ -62,8 +62,8 @@ public class ItemService {
 
     private Pageable createPageable(Map<String, String> filters) {
         Integer page = parseIntOrDefault(filters.get("page"), 0);
-        Integer size = parseIntOrDefault(filters.get("size"), 30);
-        String sort = filters.getOrDefault("sort", "id");
+        Integer size = parseIntOrDefault(filters.get("size"), 54);
+        String sort = filters.getOrDefault("sort", "price");
         String order = filters.getOrDefault("order", "asc");
 
         return PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sort));

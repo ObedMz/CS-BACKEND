@@ -35,6 +35,7 @@ public class SteamAPIService {
     }
     public SteamDTO saveSteamData(SteamDTO steamDTO) {
         steamRepository.saveAll(List.of(steamDTO));
+        updateDataAsync();
         return getSteamData();
     }
 
@@ -57,10 +58,7 @@ public class SteamAPIService {
 
     @Async
     public void updateDataAsync() {
-        CompletableFuture.runAsync(() -> {
-            updateCoolDown();
-            fetchData();
-        });
+        CompletableFuture.runAsync(this::fetchData);
     }
 
 

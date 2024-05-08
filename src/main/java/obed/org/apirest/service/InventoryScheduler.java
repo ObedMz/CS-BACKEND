@@ -10,7 +10,7 @@ public class InventoryScheduler {
     @Autowired
     private SteamAPIService steamAPIService;
 
-    @Scheduled (fixedRate = 360000)
+    @Scheduled (fixedRate = 3600000)
     public void updateInventory() {
         steamAPIService.fetchData();
     }
