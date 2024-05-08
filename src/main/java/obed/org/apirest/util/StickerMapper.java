@@ -1,7 +1,7 @@
 package obed.org.apirest.util;
 
-import obed.org.apirest.model.RawItemData;
-import obed.org.apirest.model.StickerDTO;
+import obed.org.apirest.model.data.RawItemData;
+import obed.org.apirest.model.data.StickerDTO;
 
 import java.util.*;
 import java.util.regex.Matcher;

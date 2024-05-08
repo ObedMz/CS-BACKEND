@@ -1,4 +1,4 @@
-package obed.org.apirest.model;
+package obed.org.apirest.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

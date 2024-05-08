@@ -1,6 +1,6 @@
 package obed.org.apirest.service;
 
-import obed.org.apirest.model.ItemDTO;
+import obed.org.apirest.model.data.ItemDTO;
 import obed.org.apirest.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

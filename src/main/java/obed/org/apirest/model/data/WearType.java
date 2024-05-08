@@ -1,4 +1,4 @@
-package obed.org.apirest.model;
+package obed.org.apirest.model.data;
 
 public enum WearType {
     fn("Factory New"),
