@@ -36,7 +36,7 @@ public class SteamAPIService {
     public SteamDTO saveSteamData(SteamDTO steamDTO) {
         steamDTO.setId("default");
         SteamDTO saved = steamRepository.save(steamDTO);
-        fetchData();
+        updateDataAsync();
         return saved;
     }
 

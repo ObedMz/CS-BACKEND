@@ -11,6 +11,7 @@ import java.util.List;
 public class SteamDTO {
     @Id
     private String id;
+
     private String key;
 
     private List<String> steamIDs;
