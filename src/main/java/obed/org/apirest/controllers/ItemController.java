@@ -25,6 +25,11 @@ public class ItemController {
         return ResponseEntity.ok(itemService.filterItems(filters));
     }
 
+    @GetMapping("items/search")
+    public ResponseEntity<List<ItemDTO>> searchItems(@RequestParam String searchTerm) {
+        return ResponseEntity.ok(itemService.searchItems(searchTerm));
+    }
+
     @GetMapping("/items/{id}")
     public ResponseEntity<ItemDTO> getItemById(@PathVariable String id) {
         ItemDTO item = itemService.getById(id);

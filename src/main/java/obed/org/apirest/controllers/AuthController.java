@@ -25,6 +25,7 @@ public class AuthController {
     @PostMapping("/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequest request) {
         try {
+            System.out.println(request.toString());
             authService.updatePassword(request);
             return ResponseEntity.ok("Password updated successfully.");
         } catch (Exception e) {

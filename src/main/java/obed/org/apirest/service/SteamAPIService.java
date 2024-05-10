@@ -30,13 +30,14 @@ public class SteamAPIService {
     private String URL;
 
     public SteamDTO getSteamData() {
-        Optional<SteamDTO> firstItem = steamRepository.findAll().stream().findFirst();
+        Optional<SteamDTO> firstItem = steamRepository.findById("default");
         return firstItem.orElse(null);
     }
     public SteamDTO saveSteamData(SteamDTO steamDTO) {
-        steamRepository.saveAll(List.of(steamDTO));
-        updateDataAsync();
-        return getSteamData();
+        steamDTO.setId("default");
+        SteamDTO saved = steamRepository.save(steamDTO);
+        fetchData();
+        return saved;
     }
 
 

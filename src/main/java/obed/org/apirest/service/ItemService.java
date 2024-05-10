@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -89,5 +90,14 @@ public class ItemService {
         Query query = createQuery(filters);
         query.with(pageable);
         return mongoTemplate.find(query, ItemDTO.class);
+    }
+
+    public List<ItemDTO> searchItems(String searchTerm) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("displayName").regex(searchTerm, "i"));
+        query.limit(100);
+
+        return mongoTemplate.find(query, ItemDTO.class);
+
     }
 }

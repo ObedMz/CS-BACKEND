@@ -48,8 +48,9 @@ public class AuthService {
 
     public void updatePassword(UpdatePasswordRequest request) {
         Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
-        if (userOptional.isEmpty())
+        if (userOptional.isEmpty()){
             throw new Error("User not found");
+        }
 
         User user = userOptional.get();
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
