@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.Executors;
+
 @Service
 public class InventoryScheduler {
 
@@ -14,8 +16,10 @@ public class InventoryScheduler {
 
     @Scheduled (fixedRate = 3600000)
     public void updateInventory() {
-        steamAPIService.updateDataAsync();
-        itemService.updateGroupsAsync();
+        Executors.newSingleThreadScheduledExecutor().execute(() -> {
+            steamAPIService.fetchData();
+            itemService.updateGroupsAsync();
+        });
 
     }
 }

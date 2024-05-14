@@ -63,6 +63,10 @@ public class ItemService {
                 }
                 item.setAddedPercentage(existingItem.getAddedPercentage());
                 item.setHidden(existingItem.getHidden());
+                if(existingItem.getModified() != null){
+                    item.setModified(existingItem.getModified());
+                    item.setCustom_price(existingItem.getCustom_price());
+                }
                 itemRepository.save(item);
             }catch (Exception e) {
                e.printStackTrace();

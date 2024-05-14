@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/v1")
@@ -48,11 +49,19 @@ public class ItemController {
     @PatchMapping("/admin/items/{id}")
     public ResponseEntity<ItemDTO> updateItem(@PathVariable String id,
                                               @RequestParam(value = "addedPercentage", defaultValue = "0.0") Float addedPercentage,
-                                              @RequestParam(value = "hidden", defaultValue = "false") Boolean hidden) {
+                                              @RequestParam(value = "hidden", defaultValue = "false") Boolean hidden,
+                                              @RequestParam(value = "price", required = false) Double price) {
         ItemDTO item = itemService.getById(id);
         if (item == null) return ResponseEntity.notFound().build();
         item.setAddedPercentage(addedPercentage);
         item.setHidden(hidden);
+        if(price != null) {
+            item.setModified(true);
+            item.setCustom_price(price);
+        } else {
+            item.setModified(false);
+            item.setCustom_price(0.0);
+        }
         ItemDTO updatedItem = itemService.updateItem(item);
         return ResponseEntity.ok(updatedItem);
     }
@@ -60,7 +69,10 @@ public class ItemController {
     @PatchMapping("/admin/update")
     public ResponseEntity<Void> updateItems() {
         if(steamAPIService.isCoolDown()) return ResponseEntity.status(429).build();
-        steamAPIService.updateDataAsync();
+        CompletableFuture.runAsync(()-> {
+            steamAPIService.fetchData();
+            itemService.updateGroupsAsync();
+        });
         return ResponseEntity.ok().build();
     }
 

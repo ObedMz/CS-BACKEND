@@ -21,6 +21,7 @@ public class ItemDTO {
 
     private String itemType;
     private Double price;
+    private Double custom_price;
     private String color;
     private String borderColor;
     private String rarity;

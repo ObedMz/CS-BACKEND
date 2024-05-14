@@ -46,7 +46,7 @@ public class SteamAPIService {
         if (steamDTO == null) return;
         updateCoolDown();
         for (String steamId : steamDTO.getSteamIDs()) {
-            String apiUrl = URL +  steamDTO.getKey() + "&steam_id=" + steamId;
+            String apiUrl = URL +  steamDTO.getKey() + "&steam_id=" + steamId + "&no_cache=true";
             RawItemData[] rawItems = restTemplate.getForObject(apiUrl, RawItemData[].class);
             if (rawItems == null) continue;
             List<ItemDTO> items = Arrays.stream(rawItems)
