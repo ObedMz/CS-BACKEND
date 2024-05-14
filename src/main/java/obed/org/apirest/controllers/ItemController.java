@@ -1,5 +1,6 @@
 package obed.org.apirest.controllers;
 
+import obed.org.apirest.model.data.GroupsDTO;
 import obed.org.apirest.model.data.ItemDTO;
 import obed.org.apirest.service.ItemService;
 import obed.org.apirest.service.SteamAPIService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/v1")
@@ -19,6 +21,7 @@ public class ItemController {
 
     @Autowired
     private SteamAPIService steamAPIService;
+
 
     @GetMapping("/items")
     public ResponseEntity<List<ItemDTO>> filterItems(@RequestParam Map<String, String> filters) {
@@ -59,6 +62,21 @@ public class ItemController {
         if(steamAPIService.isCoolDown()) return ResponseEntity.status(429).build();
         steamAPIService.updateDataAsync();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/items/global")
+    public ResponseEntity<Float> getGlobalPercentage() {
+        return ResponseEntity.ok(itemService.getGlobalPercentage());
+    }
+    @PostMapping("/admin/global")
+    public ResponseEntity<Integer> setGlobalPercentage(@RequestParam Float globalPercentage) {
+        itemService.setGlobalPercentage(globalPercentage);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/items/types")
+    public ResponseEntity<Set<GroupsDTO>> getTypes() {
+        return ResponseEntity.ok(itemService.getTypes());
     }
 
 

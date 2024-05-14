@@ -1,5 +1,6 @@
 package obed.org.apirest.service;
 
+import obed.org.apirest.model.data.GroupsDTO;
 import obed.org.apirest.model.data.ItemDTO;
 import obed.org.apirest.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +14,27 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
+
+    private Float globalPercentage = 0f;
+    private ConcurrentHashMap<String, Set<String>> groupedItems = new ConcurrentHashMap<>();
 
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    public void setGlobalPercentage(Float globalPercentage) {
+        this.globalPercentage = globalPercentage;
+    }
+    public Float getGlobalPercentage() {
+        return globalPercentage;
+    }
     public ItemDTO updateItem(ItemDTO item) {
         return itemRepository.save(item);
     }
@@ -100,4 +110,30 @@ public class ItemService {
         return mongoTemplate.find(query, ItemDTO.class);
 
     }
+
+    public void updateGroupsAsync() {
+        // Crear un nuevo hilo para la actualización asíncrona
+        Thread thread = new Thread(() -> {
+            List<ItemDTO> items = getAll();
+
+            // Agrupar los items por grupo
+            Map<String, Set<String>> newGroupedItems = items.stream()
+                    .collect(Collectors.groupingBy(ItemDTO::getGroup,
+                            Collectors.mapping(ItemDTO::getItemType, Collectors.toSet())));
+
+            // Actualizar el ConcurrentHashMap de manera segura
+            groupedItems = new ConcurrentHashMap<>(newGroupedItems);
+        });
+        thread.start();
+    }
+
+    public Set<GroupsDTO> getTypes() {
+        Set<GroupsDTO> groups = new HashSet<>();
+        // Convertir el ConcurrentHashMap a un conjunto de objetos GroupsDTO
+        for (Map.Entry<String, Set<String>> entry : groupedItems.entrySet()) {
+            groups.add(new GroupsDTO(entry.getKey(), entry.getValue()));
+        }
+        return groups;
+    }
+
 }
