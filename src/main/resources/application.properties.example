@@ -1,0 +1,15 @@
+pring.data.mongodb.host=localhost
+spring.data.mongodb.port=30100
+spring.data.mongodb.database=CSGO
+spring.data.mongodb.username=admin
+spring.data.mongodb.password=qwerty
+spring.data.mongodb.authentication-database=admin
+
+security.jwt.secret=qwertyuiopasdfghjklzxcvbnm123456
+security.jwt.expiration=3153600
+
+security.user.loadDefaultUserConfigurationOnLoad=true
+security.user.name=admin
+security.user.password=qwerty
+
+steam.api.url=https://www.steamwebapi.com/steam/api/inventory?key=
