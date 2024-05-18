@@ -1,5 +1,7 @@
 package obed.org.apirest.service;
 
+import lombok.Getter;
+import lombok.Setter;
 import obed.org.apirest.model.data.GroupsDTO;
 import obed.org.apirest.model.data.ItemDTO;
 import obed.org.apirest.repository.ItemRepository;
@@ -16,11 +18,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
 
+    @Getter
+    @Setter
     private Float globalPercentage = 0f;
     private ConcurrentHashMap<String, Set<String>> groupedItems = new ConcurrentHashMap<>();
 
@@ -29,12 +34,6 @@ public class ItemService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public void setGlobalPercentage(Float globalPercentage) {
-        this.globalPercentage = globalPercentage;
-    }
-    public Float getGlobalPercentage() {
-        return globalPercentage;
-    }
     public ItemDTO updateItem(ItemDTO item) {
         return itemRepository.save(item);
     }
@@ -132,12 +131,43 @@ public class ItemService {
     }
 
     public Set<GroupsDTO> getTypes() {
-        Set<GroupsDTO> groups = new HashSet<>();
-        // Convertir el ConcurrentHashMap a un conjunto de objetos GroupsDTO
-        for (Map.Entry<String, Set<String>> entry : groupedItems.entrySet()) {
-            groups.add(new GroupsDTO(entry.getKey(), entry.getValue()));
-        }
-        return groups;
+        // Initialize groups
+        Map<String, GroupsDTO> groupsMap = new HashMap<>();
+        groupsMap.put("Primary", new GroupsDTO("Primary", new HashSet<>()));
+        groupsMap.put("Secondary", new GroupsDTO("Secondary", new HashSet<>()));
+        groupsMap.put("Others", new GroupsDTO("Others", new HashSet<>()));
+        groupsMap.put("Knives", new GroupsDTO("Knives", new HashSet<>()));
+        groupsMap.put("Gloves", new GroupsDTO("Gloves", new HashSet<>()));
+
+        // Populate groups
+        groupedItems.forEach((key, value) -> {
+            String lowerKey = key.toLowerCase();
+            GroupsDTO group = groupsMap.getOrDefault(getGroup(lowerKey), groupsMap.get("Others"));
+            group.getItemTypes().addAll(value);
+        });
+
+        return new HashSet<>(groupsMap.values());
     }
+
+    // Helper method to determine the group based on the key
+    private String getGroup(String key) {
+        switch (key) {
+            case "rifles":
+            case "shotguns":
+            case "smg":
+            case "machinegun":
+            case "sniper rifle":
+                return "Primary";
+            case "pistols":
+                return "Secondary";
+            case "gloves":
+                return "Gloves";
+            case "knives":
+                return "Knives";
+            default:
+                return "Others";
+        }
+    }
+
 
 }
