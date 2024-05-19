@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
-    private final Map<String, GroupsDTO> groupsMap = new HashMap<>();
+    private final Map<String, GroupsDTO> groupsMap = new LinkedHashMap<>();
     public ItemService(){
         groupsMap.put("Primary", new GroupsDTO("Primary", new HashSet<>()));
         groupsMap.put("Secondary", new GroupsDTO("Secondary", new HashSet<>()));
-        groupsMap.put("Others", new GroupsDTO("Others", new HashSet<>()));
         groupsMap.put("Knifes", new GroupsDTO("Knifes", new HashSet<>()));
         groupsMap.put("Gloves", new GroupsDTO("Gloves", new HashSet<>()));
+        groupsMap.put("Others", new GroupsDTO("Others", new HashSet<>()));
     }
 
     @Getter
