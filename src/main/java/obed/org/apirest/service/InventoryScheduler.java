@@ -17,7 +17,9 @@ public class InventoryScheduler {
     @Scheduled (fixedRate = 3600000)
     public void updateInventory() {
         Executors.newSingleThreadScheduledExecutor().execute(() -> {
+            System.out.println("Updating items asynchronously...");
             steamAPIService.fetchData();
+            System.out.println("updating groups asynchronously...");
             itemService.updateGroupsAsync();
         });
 

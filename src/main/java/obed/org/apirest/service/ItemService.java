@@ -13,16 +13,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
+    private final Map<String, GroupsDTO> groupsMap = new HashMap<>();
+    public ItemService(){
+        groupsMap.put("Primary", new GroupsDTO("Primary", new HashSet<>()));
+        groupsMap.put("Secondary", new GroupsDTO("Secondary", new HashSet<>()));
+        groupsMap.put("Others", new GroupsDTO("Others", new HashSet<>()));
+        groupsMap.put("Knifes", new GroupsDTO("Knifes", new HashSet<>()));
+        groupsMap.put("Gloves", new GroupsDTO("Gloves", new HashSet<>()));
+    }
 
     @Getter
     @Setter
@@ -115,58 +121,40 @@ public class ItemService {
     }
 
     public void updateGroupsAsync() {
-        // Crear un nuevo hilo para la actualización asíncrona
         Thread thread = new Thread(() -> {
             List<ItemDTO> items = getAll();
 
-            // Agrupar los items por grupo
             Map<String, Set<String>> newGroupedItems = items.stream()
                     .collect(Collectors.groupingBy(ItemDTO::getGroup,
                             Collectors.mapping(ItemDTO::getItemType, Collectors.toSet())));
 
-            // Actualizar el ConcurrentHashMap de manera segura
             groupedItems = new ConcurrentHashMap<>(newGroupedItems);
+            System.out.println("Groups updated successfully -> " + groupedItems.size());
         });
         thread.start();
     }
 
     public Set<GroupsDTO> getTypes() {
-        // Initialize groups
-        Map<String, GroupsDTO> groupsMap = new HashMap<>();
-        groupsMap.put("Primary", new GroupsDTO("Primary", new HashSet<>()));
-        groupsMap.put("Secondary", new GroupsDTO("Secondary", new HashSet<>()));
-        groupsMap.put("Others", new GroupsDTO("Others", new HashSet<>()));
-        groupsMap.put("Knives", new GroupsDTO("Knives", new HashSet<>()));
-        groupsMap.put("Gloves", new GroupsDTO("Gloves", new HashSet<>()));
-
-        // Populate groups
         groupedItems.forEach((key, value) -> {
             String lowerKey = key.toLowerCase();
             GroupsDTO group = groupsMap.getOrDefault(getGroup(lowerKey), groupsMap.get("Others"));
-            group.getItemTypes().addAll(value);
+            group.getItemTypes().addAll(
+                    value.stream()
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toSet())
+            );
         });
-
         return new HashSet<>(groupsMap.values());
     }
 
-    // Helper method to determine the group based on the key
     private String getGroup(String key) {
-        switch (key) {
-            case "rifles":
-            case "shotguns":
-            case "smg":
-            case "machinegun":
-            case "sniper rifle":
-                return "Primary";
-            case "pistols":
-                return "Secondary";
-            case "gloves":
-                return "Gloves";
-            case "knives":
-                return "Knives";
-            default:
-                return "Others";
-        }
+        return switch (key) {
+            case "rifles", "shotguns", "smg", "machinegun", "sniper rifle" -> "Primary";
+            case "pistol" -> "Secondary";
+            case "gloves" -> "Gloves";
+            case "knife" -> "Knifes";
+            default -> "Others";
+        };
     }
 
 

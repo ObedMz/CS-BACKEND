@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,19 +42,22 @@ public class SteamAPIService {
     }
 
 
-     public void fetchData() {
+    public void fetchData() {
         SteamDTO steamDTO = getSteamData();
         if (steamDTO == null) return;
         updateCoolDown();
-        for (String steamId : steamDTO.getSteamIDs()) {
-            String apiUrl = URL +  steamDTO.getKey() + "&steam_id=" + steamId + "&no_cache=true";
-            RawItemData[] rawItems = restTemplate.getForObject(apiUrl, RawItemData[].class);
-            if (rawItems == null) continue;
-            List<ItemDTO> items = Arrays.stream(rawItems)
-                    .map(ItemDTO::createByRawItem)
-                    .collect(Collectors.toList());
-            itemService.save(items);
-        }
+        steamDTO.getSteamIDs()
+                .forEach(steamId -> CompletableFuture.runAsync(() -> {
+                    String apiUrl = URL + steamDTO.getKey() + "&steam_id=" + steamId + "&no_cache=true";
+                    System.out.println("apiUrl: " + apiUrl);
+                    RawItemData[] rawItems = restTemplate.getForObject(apiUrl, RawItemData[].class);
+                    if (rawItems == null) return;
+
+                    List<ItemDTO> items = Arrays.stream(rawItems)
+                            .map(ItemDTO::createByRawItem)
+                            .collect(Collectors.toList());
+                    itemService.save(items);
+                }));
     }
 
 

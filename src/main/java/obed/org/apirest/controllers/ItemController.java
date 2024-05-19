@@ -70,7 +70,9 @@ public class ItemController {
     public ResponseEntity<Void> updateItems() {
         if(steamAPIService.isCoolDown()) return ResponseEntity.status(429).build();
         CompletableFuture.runAsync(()-> {
+            System.out.println("Updating items asynchronously...");
             steamAPIService.fetchData();
+            System.out.println("updating groups asynchronously...");
             itemService.updateGroupsAsync();
         });
         return ResponseEntity.ok().build();
