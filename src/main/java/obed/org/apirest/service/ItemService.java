@@ -138,8 +138,9 @@ public class ItemService {
             case "primary" -> itemRepository.findByGroupIn(Arrays.asList("rifle", "sniper rifle", "machinegun", "smg"));
             case "secondary" -> itemRepository.findByGroup("pistol");
             case "knife" -> itemRepository.findByGroup("knife");
+            case "gloves" -> itemRepository.findByGroup("gloves");
             case "agent" -> itemRepository.findByGroup("agent");
-            case "others" -> itemRepository.findByGroupIn(Arrays.asList("sticker", "graffiti", "gloves", "music kit"));
+            case "others" -> itemRepository.findByGroupIn(Arrays.asList("sticker", "graffiti", "music kit"));
             default -> throw new IllegalArgumentException("Invalid category: " + category);
         };
     }
