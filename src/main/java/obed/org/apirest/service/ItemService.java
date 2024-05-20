@@ -133,7 +133,16 @@ public class ItemService {
         });
         thread.start();
     }
-
+    public List<ItemDTO> getItemsByCategory(String category) {
+        return switch (category.toLowerCase()) {
+            case "primary" -> itemRepository.findByGroupIn(Arrays.asList("rifle", "sniper rifle", "machinegun", "smg"));
+            case "secondary" -> itemRepository.findByGroup("pistol");
+            case "knife" -> itemRepository.findByGroup("knife");
+            case "agent" -> itemRepository.findByGroup("agent");
+            case "others" -> itemRepository.findByGroupIn(Arrays.asList("sticker", "graffiti", "gloves", "music kit"));
+            default -> throw new IllegalArgumentException("Invalid category: " + category);
+        };
+    }
     public Set<GroupsDTO> getTypes() {
         groupedItems.forEach((key, value) -> {
             String lowerKey = key.toLowerCase();

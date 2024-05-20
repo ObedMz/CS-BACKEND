@@ -93,6 +93,9 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getTypes());
     }
 
-
+    @GetMapping("items/filter")
+    public ResponseEntity<List<ItemDTO>> getFilters(@RequestParam String group) {
+        return ResponseEntity.ok(itemService.getItemsByCategory(group));
+    }
 
 }
