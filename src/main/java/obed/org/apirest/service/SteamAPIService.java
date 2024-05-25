@@ -3,6 +3,7 @@ package obed.org.apirest.service;
 import obed.org.apirest.model.data.ItemDTO;
 import obed.org.apirest.model.data.RawItemData;
 import obed.org.apirest.model.data.SteamDTO;
+import obed.org.apirest.repository.ItemRepository;
 import obed.org.apirest.repository.SteamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 public class SteamAPIService {
     @Autowired
     private SteamRepository steamRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
     @Autowired
     private ItemService itemService;
     @Autowired
@@ -56,7 +61,20 @@ public class SteamAPIService {
                             .map(ItemDTO::createByRawItem)
                             .collect(Collectors.toList());
                     itemService.save(items);
+
+                    Set<String> externalDataIds = items.stream()
+                            .map(ItemDTO::getId)
+                            .collect(Collectors.toSet());
+                    List<String> currentDataIds = itemRepository.findAllIds();
+                    deleteMissingData(currentDataIds, externalDataIds);
                 }));
+    }
+    private void deleteMissingData(List<String> currentDataIds, Set<String> externalDataIds) {
+        Set<String> idsToDelete = currentDataIds.stream()
+                .filter(id -> !externalDataIds.contains(id))
+                .collect(Collectors.toSet());
+        System.out.println("idsToDelete: " + idsToDelete);
+        itemRepository.deleteAllByIdIn(idsToDelete);
     }
 
 

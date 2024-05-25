@@ -17,10 +17,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
+    private final ExecutorService executorService = Executors.newFixedThreadPool(20);
+
     private final Map<String, GroupsDTO> groupsMap = new LinkedHashMap<>();
     public ItemService(){
         groupsMap.put("Primary", new GroupsDTO("Primary", new HashSet<>()));
@@ -59,7 +64,7 @@ public class ItemService {
     }
 
     public void save(List<ItemDTO> items) {
-        items.forEach(item -> {
+        items.forEach(item -> executorService.submit(() -> {
             try {
                 ItemDTO existingItem = itemRepository.findById(item.getId()).orElse(null);
                 if (existingItem == null) {
@@ -68,16 +73,29 @@ public class ItemService {
                 }
                 item.setAddedPercentage(existingItem.getAddedPercentage());
                 item.setHidden(existingItem.getHidden());
-                if(existingItem.getModified() != null){
+                if (existingItem.getModified() != null) {
                     item.setModified(existingItem.getModified());
                     item.setCustom_price(existingItem.getCustom_price());
                 }
                 itemRepository.save(item);
-            }catch (Exception e) {
-               e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-        });
+        }));
+        shutdownExecutorService();
+    }
+    private void shutdownExecutorService() {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+                if (!executorService.awaitTermination(60, TimeUnit.SECONDS))
+                    System.err.println("ExecutorService no se ha cerrado.");
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
     private Pageable createPageable(Map<String, String> filters) {
