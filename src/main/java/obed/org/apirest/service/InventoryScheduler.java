@@ -19,8 +19,9 @@ public class InventoryScheduler {
 
         System.out.println("Updating items asynchronously...");
         steamAPIService.fetchData();
+        if(steamAPIService.getSteamData() != null && steamAPIService.getSteamData().getSteamIDs() != null)
+            rawItemService.fetchData(steamAPIService.getSteamData().getSteamIDs());
 
-        rawItemService.fetchData(steamAPIService.getSteamData().getSteamIDs());
         System.out.println("updating groups asynchronously...");
         itemService.updateGroupsAsync();
 

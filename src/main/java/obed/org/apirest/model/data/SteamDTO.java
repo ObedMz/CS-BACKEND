@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,6 +15,6 @@ public class SteamDTO {
 
     private String key;
 
-    private List<String> steamIDs;
+    private List<String> steamIDs = new ArrayList<String>();
 
 }
