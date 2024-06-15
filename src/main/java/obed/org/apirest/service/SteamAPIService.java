@@ -2,6 +2,7 @@ package obed.org.apirest.service;
 
 import obed.org.apirest.model.data.ItemDTO;
 import obed.org.apirest.model.data.RawItemData;
+import obed.org.apirest.model.data.RawSteamDto;
 import obed.org.apirest.model.data.SteamDTO;
 import obed.org.apirest.repository.ItemRepository;
 import obed.org.apirest.repository.SteamRepository;
@@ -23,6 +24,8 @@ public class SteamAPIService {
     @Autowired
     private SteamRepository steamRepository;
 
+    @Autowired
+    private RawItemService rawItemService;
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
@@ -60,6 +63,12 @@ public class SteamAPIService {
                     List<ItemDTO> items = Arrays.stream(rawItems)
                             .map(ItemDTO::createByRawItem)
                             .collect(Collectors.toList());
+                    //aqui
+                    items.forEach(item -> {
+                        RawSteamDto raw = rawItemService.findById(item.getClassid());
+                        item.setMarketTradeableRestriction(raw.getDaysremaining());
+                        itemService.updateItem(item);
+                    });
                     itemService.save(items);
 
                     Set<String> externalDataIds = items.stream()

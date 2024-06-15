@@ -18,6 +18,7 @@ public class RawItemData {
     private String itemname;
     private String itemtype;
     private double pricereal;
+    private long classid;
     private String bordercolor;
     private String color;
     private String image;

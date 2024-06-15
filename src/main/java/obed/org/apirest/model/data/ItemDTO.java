@@ -18,7 +18,7 @@ public class ItemDTO {
     private String name;
     private Float addedPercentage;
     private Boolean hidden;
-
+    private Long classid;
     private String itemType;
     private Double price;
     private Double custom_price;
@@ -47,6 +47,7 @@ public class ItemDTO {
                 .quality(rawItem.getQuality())
                 .image(rawItem.getImage())
                 .tradeable(rawItem.isTradable())
+                .classid(rawItem.getClassid())
                 .inspectLink(rawItem.getInspectlink())
                 .wear(rawItem.getWear() != null ? WearType.valueOf(rawItem.getWear()) : WearType.none)
                 .marketTradeableRestriction(rawItem.getMarkettradablerestriction())

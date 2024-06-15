@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InventoryScheduler {
+    @Autowired
+    private RawItemService rawItemService;
 
     @Autowired
     private SteamAPIService steamAPIService;
@@ -14,8 +16,11 @@ public class InventoryScheduler {
 
     @Scheduled (fixedRate = 3600000)
     public void updateInventory() {
+
         System.out.println("Updating items asynchronously...");
         steamAPIService.fetchData();
+
+        rawItemService.fetchData();
         System.out.println("updating groups asynchronously...");
         itemService.updateGroupsAsync();
 
