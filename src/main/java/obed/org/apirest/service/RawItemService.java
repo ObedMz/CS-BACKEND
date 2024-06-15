@@ -3,36 +3,29 @@ package obed.org.apirest.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import obed.org.apirest.model.data.ItemDTO;
-import obed.org.apirest.model.data.RawItemData;
 import obed.org.apirest.model.data.RawSteamDto;
 import obed.org.apirest.repository.RawItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class RawItemService {
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private SteamAPIService steamAPIService;
 
     @Autowired
     private RawItemRepository rawItemRepository;
 
-    public void fetchData(){
-        for(String steamID : steamAPIService.getSteamData().getSteamIDs()){
+    public void fetchData(List<String> steamIds) {
+        for(String steamID : steamIds){
             String apiUrl = "https://steamcommunity.com/inventory/" + steamID + "/730/2?l=english";
             ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
             String responseBody = response.getBody();

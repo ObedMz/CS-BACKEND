@@ -20,7 +20,7 @@ public class InventoryScheduler {
         System.out.println("Updating items asynchronously...");
         steamAPIService.fetchData();
 
-        rawItemService.fetchData();
+        rawItemService.fetchData(steamAPIService.getSteamData().getSteamIDs());
         System.out.println("updating groups asynchronously...");
         itemService.updateGroupsAsync();
 
